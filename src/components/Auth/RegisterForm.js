@@ -2,134 +2,128 @@
 
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { registerSuccess, registerFail } from './path/to/authSlice';
-// import authService from './path/to/authService';
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
 import { Register } from "../../store/actions/AuthActions";
 import { useNavigate } from "react-router-dom";
 import { REGISTER_FAILED } from "../../constants/ActionConstant";
+import { Alert, Button, Form } from "react-bootstrap";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [address, setAddress] = useState("");
   // const [loading, setLoading] = useState(false);
   // const [error, setError] = useState("");
 
-  const handleChangeName = (e) => {
-    const name = e.target.value;
-    setName(name);
-  };
-  const handleChangeEmail = (e) => {
-    const email = e.target.value;
-    setEmail(email);
-  };
-  const handleChangePassword = (e) => {
-    const password = e.target.value;
-    setPassword(password);
-  };
-  const handleChangeAddress = (e) => {
-    const address = e.target.value;
-    setAddress(address);
+  const [form, setForm] = useState({});
+  const [errors, setErrors] = useState({});
+
+  const setField = (field, value) => {
+    setForm({
+      ...form,
+      [field]: value,
+    });
+    if (!!errors[field])
+      setErrors({
+        ...errors,
+        [field]: null,
+      });
+    // console.log(form, errors);
   };
 
-  const required = (value) => {
-    if (!value) {
-      return (
-        <div className="alert alert-danger" role="alert">
-          This field is required!
-        </div>
-      );
-    }
+  const rules = () => {
+    const { name, email, password, address } = form;
+    // console.log(form);
+    const newErrors = {};
+    if (!name || name === "") newErrors.name = "Name cannot be blank!";
+    if (!email || email === "") newErrors.email = "Email cannot be blank!";
+    if (!password || password === "")
+      newErrors.password = "Password cannot be blank!";
+    else if (password.length < 6) newErrors.password = "Password is too short!";
+    if (!address || address === "")
+      newErrors.address = "Address cannot be blank!";
+
+    return newErrors;
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(Register(name, email, password, address))
-      .then((res) => {
-        if (res === REGISTER_FAILED) {
-          alert("Register failed");
-        } else {
-          navigate("/");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi và cập nhật thông báo lỗi lên state.
-      });
+    const newErrors = rules();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      console.log(newErrors);
+    } else {
+      console.log(form);
+      dispatch(Register(form.name, form.email, form.password, form.address))
+        .then((res) => {
+          if (res === REGISTER_FAILED) {
+            alert("Register failed");
+          } else {
+            navigate("/");
+          }
+        })
+        .catch((error) => {
+          console.log(form);
+        });
+    }
   };
 
   return (
     // them input upload avatar
     <Form onSubmit={handleSubmit}>
-      <div className="form-outline form-white mb-3">
-        <label className="form-label" htmlFor="name">
-          Name
-        </label>
-        <Input
+      <Form.Group className="mb-3">
+        <Form.Label>Name</Form.Label>
+        <Form.Control
           type="name"
           name="name"
-          id="name"
-          className="form-control form-control-lg"
-          placeholder="Enter Name"
-          onChange={handleChangeName}
-          validations={[required]}
+          placeholder="Name"
+          onChange={(e) => setField("name", e.target.value)}
+          isInvalid={!!errors.name}
+          required
         />
-        {/* Thêm xử lý hiển thị lỗi trong React (nếu cần) */}
-      </div>
-      <div className="form-outline form-white mb-3">
-        <label className="form-label" htmlFor="email">
-          Email
-        </label>
-        <Input
+        {errors.name && <Alert variant="danger">{errors.name}</Alert>}
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Email address</Form.Label>
+        <Form.Control
           type="email"
           name="email"
-          id="email"
-          className="form-control form-control-lg"
-          placeholder="Enter Email"
-          onChange={handleChangeEmail}
-          validations={[required]}
+          placeholder="name@example.com"
+          onChange={(e) => setField("email", e.target.value)}
+          isInvalid={!!errors.email}
+          required
         />
-        {/* Thêm xử lý hiển thị lỗi trong React (nếu cần) */}
-      </div>
-      <div className="form-outline form-white mb-3">
-        <label className="form-label" htmlFor="password">
-          Password
-        </label>
-        <Input
-          name="password"
-          id="password"
+        {errors.email && <Alert variant="danger">{errors.email}</Alert>}
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
           type="password"
-          className="form-control form-control-lg"
-          placeholder="Enter Password"
-          onChange={handleChangePassword}
-          validations={[required]}
+          name="password"
+          placeholder="Password"
+          onChange={(e) => setField("password", e.target.value)}
+          isInvalid={!!errors.password}
+          required
         />
-        {/* Thêm xử lý hiển thị lỗi trong React (nếu cần) */}
-      </div>
-      <div className="form-outline form-white mb-3">
-        <label className="form-label" htmlFor="address">
-          Address
-        </label>
-        <Input
+        {errors.password && <Alert variant="danger">{errors.password}</Alert>}
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Address</Form.Label>
+        <Form.Control
+          type="address"
           name="address"
-          id="address"
-          type="text"
-          className="form-control form-control-lg"
-          placeholder="Enter Address"
-          onChange={handleChangeAddress}
-          validations={[required]}
+          placeholder="Address"
+          onChange={(e) => setField("address", e.target.value)}
+          isInvalid={!!errors.address}
+          required
         />
-        {/* Thêm xử lý hiển thị lỗi trong React (nếu cần) */}
-      </div>
-      <button
-        type="submit"
-        className="btn btn-secondary form-control form-control-lg mt-3"
-      >
+        {errors.address && <Alert variant="danger">{errors.address}</Alert>}
+      </Form.Group>
+
+      <Button type="submit" variant="secondary" className="form-control mt-3">
         <strong>Register</strong>
-      </button>
+      </Button>
     </Form>
   );
 };

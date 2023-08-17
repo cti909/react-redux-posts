@@ -4,7 +4,7 @@ import Header from "../../parts/Header";
 import Footer from "../../parts/Footer";
 import { Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import convertTime from "../../components/public/ConvertTime";
+import convertTime from "../../utils/ConvertTime";
 import ButtonEdit from "../../components/public/ButtonEdit";
 
 function UserHome(props) {

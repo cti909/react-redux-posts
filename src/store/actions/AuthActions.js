@@ -6,7 +6,7 @@ import {
   REGISTER_SUCCESS,
   SET_USER,
 } from "../../constants/ActionConstant";
-import { login, register } from "../../services/Auth/Auth.service";
+import { login, register, setUser } from "../../services/Auth/Auth.service";
 
 console.log("action auth");
 
@@ -93,9 +93,20 @@ export const Register = (name, email, password, address) => {
   };
 };
 
-export const setUser = (user) => {
-  return {
-    type: SET_USER,
-    payload: user,
+export const SetUser = () => {
+  return async (dispatch) => {
+    try {
+      const response = await setUser();
+      dispatch({
+        type: SET_USER,
+        payload: response.data,
+      });
+    } catch (error) {
+      console.log("err", error);
+      dispatch({
+        type: SET_USER,
+        payload: [],
+      });
+    }
   };
 };

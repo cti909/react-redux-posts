@@ -1,6 +1,7 @@
 import {
   ADD_POST,
   DELETE_POST,
+  FILTER_ALL_MY_POST,
   FILTER_ALL_POST,
   GET_ALL_CATEGORIES,
   GET_ALL_MY_POST,
@@ -13,9 +14,16 @@ const initState = {
   data: [], // du lieu POST
   pagination: {}, // phan trang
   categories: [],
+  sort: {
+    categoryId: 1,
+    page: 1,
+    column: "updatedAt",
+    sortType: "desc",
+    search: "",
+  },
 };
 
-console.log("reducer POSTs");
+console.log("reducer posts");
 
 // tree state/POSTs
 const PostsReducer = (state = initState, action) => {
@@ -26,19 +34,19 @@ const PostsReducer = (state = initState, action) => {
         ...state,
         categories: action.payload.data,
       };
-    case GET_ALL_MY_POST:
-      console.log("reducer GET_ALL_MY_POST");
-      return {
-        ...state,
-        data: action.payload.data,
-        pagination: action.payload.meta,
-      };
     case GET_ALL_POST:
       console.log("reducer GET_ALL_POST");
       return {
         ...state,
         data: action.payload.data,
         pagination: action.payload.meta,
+        sort: {
+          categoryId: action.payload.sort.categoryId,
+          page: action.payload.sort.page,
+          column: action.payload.sort.column,
+          sortType: action.payload.sort.sortType,
+          search: action.payload.sort.search,
+        },
       };
     case FILTER_ALL_POST:
       console.log("reducer FILTER_ALL_POST");
@@ -46,6 +54,13 @@ const PostsReducer = (state = initState, action) => {
         ...state,
         data: action.payload.data,
         pagination: action.payload.meta,
+        sort: {
+          categoryId: action.payload.sort.categoryId,
+          page: action.payload.sort.page,
+          column: action.payload.sort.column,
+          sortType: action.payload.sort.sortType,
+          search: action.payload.sort.search,
+        },
       };
     case GET_DETAIL_POST:
       console.log("reducer GET_DETAIL_POST");

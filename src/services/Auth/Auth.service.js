@@ -11,7 +11,7 @@ export const login = (email, password) => {
     .then((response) => {
       if (response.data.meta) {
         localStorage.setItem("accessToken", response.data.meta.accessToken);
-        localStorage.setItem("user", JSON.stringify(response.data.data));
+        // localStorage.setItem("user", JSON.stringify(response.data.data));
       }
       //   console.log(response);
       return response.data;
@@ -42,6 +42,23 @@ export const register = (name, email, password, address) => {
     })
     .catch((error) => {
       // Trả về lỗi để các thành phần khác có thể xử lý tiếp hoặc hiển thị thông báo lỗi cho người dùng
+      return Promise.reject(error);
+    });
+};
+
+export const setUser = () => {
+  console.log("api register");
+  let token = localStorage.getItem("accessToken");
+  return axios
+    .get(API_URL + "auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
       return Promise.reject(error);
     });
 };

@@ -5,9 +5,11 @@ import { AddComments } from "../../store/actions/CommentActions";
 import "../../assets/css/text.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { useParams } from "react-router-dom";
 
 function CommentAddForm(props) {
   const dispatch = useDispatch();
+  const { postId } = useParams();
   const userId = useSelector((state) => state.auth.user.id);
   console.log("comment add form");
 
@@ -16,13 +18,9 @@ function CommentAddForm(props) {
     e.preventDefault();
     let content = e.target.content.value;
     if (content && content !== "\n") {
-      let result = window.confirm("Are you want add new comment?");
-      if (result) {
-        content = content.replace(/\n/g, "<br/>");
-        dispatch(AddComments(content, "0000", props.postId, userId));
-        e.target.content.value = "";
-        props.handleRender(true);
-      }
+      content = content.replace(/\n/g, "<br/>");
+      dispatch(AddComments(content, "0000", postId, userId));
+      e.target.content.value = "";
     } else {
       alert("You must enter content!");
     }

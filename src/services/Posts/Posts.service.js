@@ -14,31 +14,22 @@ export const getAllCategories = () => {
     });
 };
 
-export const getAllMyPosts = (userId) => {
-  console.log("api getAllPosts");
-  // const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODk4MTc1NzcsImV4cCI6MTY4OTgyMTE3NywibmJmIjoxNjg5ODE3NTc3LCJqdGkiOiJnT3E5a1A1VmozdzJObkdYIiwic3ViIjoiMTYiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.NXsJAjex8U5j0cLBO-y_fIJ8Yg-E7SVUGZz3yl1J8TQ"
-  return axios
-    .get(
-      API_URL +
-        `posts?column=updatedAt&sortType=desc&where=categoryId[eq]1,creatorId[eq]${userId}&userId=${userId}`
-    )
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      return error;
-    });
-};
-
 //user1-admin
-export const getAllPosts = (userId) => {
+export const getAllPosts = (userId, isMe) => {
   console.log("api getAllPosts");
   // const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODk4MTc1NzcsImV4cCI6MTY4OTgyMTE3NywibmJmIjoxNjg5ODE3NTc3LCJqdGkiOiJnT3E5a1A1VmozdzJObkdYIiwic3ViIjoiMTYiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.NXsJAjex8U5j0cLBO-y_fIJ8Yg-E7SVUGZz3yl1J8TQ"
-  return axios
-    .get(
+  let url = "";
+  if (!isMe) {
+    url =
       API_URL +
-        `posts?column=updatedAt&sortType=desc&where=categoryId[eq]1&userId=${userId}`
-    )
+      `posts?column=updatedAt&sortType=desc&where=categoryId[eq]1&userId=${userId}`;
+  } else {
+    url =
+      API_URL +
+      `posts?column=updatedAt&sortType=desc&where=categoryId[eq]1,creatorId[eq]${userId}&userId=${userId}`;
+  }
+  return axios
+    .get(url)
     .then((response) => {
       return response.data;
     })
@@ -53,14 +44,22 @@ export const filterAllPosts = (
   column,
   sortType,
   search,
-  userId
+  userId,
+  isMe
 ) => {
+  let url = "";
+  if (!isMe) {
+    url =
+      API_URL +
+      `posts?page=${page}&column=${column}&sortType=${sortType}&where=title[like]${search},categoryId[eq]${categoryId}&userId=${userId}`;
+  } else {
+    url =
+      API_URL +
+      `posts?page=${page}&column=${column}&sortType=${sortType}&where=title[like]${search},categoryId[eq]${categoryId},creatorId[eq]${userId}&userId=${userId}`;
+  }
   console.log("api filterAllPosts");
   return axios
-    .get(
-      API_URL +
-        `posts?page=${page}&column=${column}&sortType=${sortType}&where=title[like]${search},categoryId[eq]${categoryId}&userId=${userId}`
-    )
+    .get(url)
     .then((response) => {
       return response.data;
     })

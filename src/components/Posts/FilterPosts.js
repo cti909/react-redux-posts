@@ -8,39 +8,83 @@ import {
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { GetAllCategories } from "../../store/actions/PostActions";
+import {
+  FilterAllPosts,
+  GetAllCategories,
+} from "../../store/actions/PostActions";
 import "../../assets/css/post.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
-function FilterPosts(props) {
-  const filterSelect = [
-    {
-      id: 1,
-      field: "Time",
-      filter: "updatedAt",
-    },
-    {
-      id: 2,
-      field: "Title",
-      filter: "title",
-    },
-  ];
-  const filterSortName = [
-    {
-      id: 1,
-      name: "asc",
-      icon: faArrowDownShortWide,
-    },
-    {
-      id: 2,
-      name: "desc",
-      icon: faArrowDownWideShort,
-    },
-  ];
-  const categories = useSelector((state) => state.posts.categories);
+const filterSelect = [
+  {
+    id: 1,
+    field: "Time",
+    filter: "updatedAt",
+  },
+  {
+    id: 2,
+    field: "Title",
+    filter: "title",
+  },
+];
+const filterSortName = [
+  {
+    id: 1,
+    name: "asc",
+    icon: faArrowDownShortWide,
+  },
+  {
+    id: 2,
+    name: "desc",
+    icon: faArrowDownWideShort,
+  },
+];
+
+function FilterPosts() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const categories = useSelector((state) => state.posts.categories);
+  const categoryId = useSelector((state) => state.posts.sort.categoryId);
+  const column = useSelector((state) => state.posts.sort.column);
+  const sortType = useSelector((state) => state.posts.sort.sortType);
+  const search = useSelector((state) => state.posts.sort.search);
+  const page = useSelector((state) => state.posts.sort.page);
+  const userId = useSelector((state) => state.auth.user.id);
+  const [sort, setSort] = useState({
+    categoryId: categoryId,
+    column: column,
+    sortType: sortType,
+    search: search,
+  });
+
+  useEffect(() => {
+    console.log("calllllll filter");
+    const urlParts = location.pathname.split("/");
+    const isMe = urlParts[urlParts.length - 1] === "me" ? true : false;
+    dispatch(
+      FilterAllPosts(
+        sort.categoryId || 1,
+        sort.page || 1,
+        sort.column || "updatedAt",
+        sort.sortType || "desc",
+        sort.search || "",
+        userId || 0,
+        isMe
+      )
+    );
+  }, [sort]);
+
   useEffect(() => {
     dispatch(GetAllCategories());
   }, []);
+
+  const setField = (field, value) => {
+    setSort({
+      ...sort,
+      [field]: value,
+    });
+  };
 
   return (
     <>
@@ -50,8 +94,8 @@ function FilterPosts(props) {
             <div className="me-2">
               {/* select */}
               <Form.Select
-                value={props.categoryId}
-                onChange={props.handleSelectCategoriesChange}
+                value={sort.categoryId}
+                onChange={(e) => setField("categoryId", e.target.value)}
               >
                 {categories.map((item) => (
                   <option key={item.id} value={item.id}>
@@ -63,8 +107,8 @@ function FilterPosts(props) {
             <div className="me-2">
               {/* select */}
               <Form.Select
-                value={props.column}
-                onChange={props.handleSelectChange}
+                value={sort.column}
+                onChange={(e) => setField("column", e.target.value)}
               >
                 {filterSelect.map((item) => (
                   <option key={item.id} value={item.filter}>
@@ -86,8 +130,8 @@ function FilterPosts(props) {
                       name="sortNotes"
                       label={item.name}
                       type="radio"
-                      onChange={props.handleSortChange}
-                      checked={props.sortName === item.name}
+                      onChange={(e) => setField("sortType", e.target.value)}
+                      checked={sort.sortType === item.name}
                     />
                     <FontAwesomeIcon icon={item.icon} />
                   </div>
@@ -97,7 +141,14 @@ function FilterPosts(props) {
           </div>
         </div>
 
-        <Form className="d-flex mb-2" onSubmit={props.handleSearchSubmit}>
+        <Form
+          className="d-flex mb-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log(e.target.seachToken.value);
+            setField("search", e.target.seachToken.value);
+          }}
+        >
           <div className="input-group">
             <Form.Control
               name="seachToken"

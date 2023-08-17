@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import background_login from "../../assets/images/background_login.jpg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
@@ -9,9 +8,16 @@ import { Login } from "../../store/actions/AuthActions";
 import { LOGIN_SUCCESS } from "../../constants/ActionConstant";
 import LoginForm from "../../components/Auth/LoginForm";
 
-LoginPage.propTypes = {};
-
 function LoginPage(props) {
+  const navigate = useNavigate();
+  const handleClickRegister = (e) => {
+    e.preventDefault();
+    navigate("/register");
+  };
+  const handleClickHome = (e) => {
+    e.preventDefault();
+    navigate("/");
+  };
   return (
     <section
       style={{
@@ -34,24 +40,32 @@ function LoginPage(props) {
                   <p className="text-white-50 mb-4 text-center">
                     Please enter your login and password!
                   </p>
-                  
+
                   <LoginForm />
 
                   <div className="d-flex justify-content-between mt-2">
-                    <a className="text-white-50" href="#">
+                    <Link className="text-white-50" href="#">
                       Forgot password?
-                    </a>
-                    <a className="text-white-50" href="/">
+                    </Link>
+                    <Link
+                      className="text-white-50"
+                      href="/"
+                      onClick={handleClickHome}
+                    >
                       Back to home
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <div>
                   <p className="text-center">
                     You have an account?
-                    <a href="/register" className="ms-1 text-white-50 fw-bold">
+                    <Link
+                      href="/register"
+                      className="ms-1 text-white-50 fw-bold"
+                      onClick={handleClickRegister}
+                    >
                       Sign Up
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>

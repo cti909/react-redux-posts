@@ -10,14 +10,16 @@ import CommentsList from "../../components/Comments/CommentsList";
 import "../../assets/css/postAction.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import "../../utils/scrollToTop";
+import { scrollToTop } from "../../utils/scrollToTop";
 
 function PostDetail(props) {
   const dispatch = useDispatch();
   const { postId } = useParams();
   const postDetail = useSelector((state) => state.posts.data);
   const userId = useSelector((state) => state.auth.user.id) || 0;
+  const comments = useSelector((state) => state.comments.data);
   const [showGoToTop, setShowGoToTop] = useState(false);
-  const [render, setRender] = useState(false)
 
   console.log(postDetail.length);
   console.log("render");
@@ -28,11 +30,8 @@ function PostDetail(props) {
 
   useEffect(() => {
     dispatch(GetDetailPost(postId, userId));
-  }, [userId, render]);
+  }, [userId, comments]);
 
-  const handleRender = (value) => {
-    setRender(value)
-  }
   const handleBackToListPosts = () => {
     window.history.back();
   };
@@ -49,13 +48,6 @@ function PostDetail(props) {
     };
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
   return (
     <>
       <Header />
@@ -70,10 +62,8 @@ function PostDetail(props) {
       </div>
       <main>
         <Container className="my-3">
-          {postDetail.length === 1 && (
-            <PostItem item={postDetail[0]} userId={userId} />
-          )}
-          <CommentsList postId={postId} userId={userId} handleRender={handleRender}/>
+          {postDetail.length === 1 && <PostItem item={postDetail[0]} />}
+          <CommentsList />
         </Container>
       </main>
       {showGoToTop && (

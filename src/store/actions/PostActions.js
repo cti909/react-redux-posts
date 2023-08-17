@@ -2,6 +2,7 @@ import {
   addPosts,
   deletePosts,
   editPosts,
+  filterAllMyPosts,
   filterAllPosts,
   getAllCategories,
   getAllMyPosts,
@@ -44,35 +45,25 @@ export const GetAllCategories = () => {
   };
 };
 /**
- * Lay POSTs trong 1 trang cua minh
- */
-export const GetAllMyPosts = (userId) => {
-  return async (dispatch) => {
-    try {
-      const response = await getAllMyPosts(userId);
-      dispatch({
-        type: GET_ALL_MY_POST,
-        payload: { data: response.data, meta: response.meta },
-      });
-    } catch (err) {
-      console.log(err);
-      dispatch({
-        type: GET_ALL_MY_POST,
-        payload: [],
-      });
-    }
-  };
-};
-/**
  * Lay POSTs trong 1 trang
  */
-export const GetAllPosts = (userId) => {
+export const GetAllPosts = (userId, isMe) => {
   return async (dispatch) => {
     try {
-      const response = await getAllPosts(userId);
+      const response = await getAllPosts(userId, isMe);
       dispatch({
         type: GET_ALL_POST,
-        payload: { data: response.data, meta: response.meta },
+        payload: {
+          data: response.data,
+          meta: response.meta,
+          sort: {
+            categoryId: 1,
+            page: 1,
+            column: "updatedAt",
+            sortType: "desc",
+            search: "",
+          },
+        },
       });
     } catch (err) {
       console.log(err);
@@ -90,7 +81,8 @@ export const FilterAllPosts = (
   column,
   sortType,
   search,
-  userId
+  userId,
+  isMe
 ) => {
   return async (dispatch) => {
     try {
@@ -100,11 +92,22 @@ export const FilterAllPosts = (
         column,
         sortType,
         search,
-        userId
+        userId,
+        isMe
       );
       dispatch({
         type: GET_ALL_POST,
-        payload: { data: response.data, meta: response.meta },
+        payload: {
+          data: response.data,
+          meta: response.meta,
+          sort: {
+            categoryId: categoryId,
+            page: page,
+            column: column,
+            sortType: sortType,
+            search: search,
+          },
+        },
       });
     } catch (err) {
       console.log(err);

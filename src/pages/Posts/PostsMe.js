@@ -1,22 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../parts/Header";
 import Footer from "../../parts/Footer";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
-
+import { Button, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { GetAllMyPosts } from "../../store/actions/PostActions";
+import { GetAllPosts } from "../../store/actions/PostActions";
 import PostsList from "../../components/Posts/PostsList";
 import CustomPagination from "../../components/Posts/CustomPagination";
+import FilterPosts from "../../components/Posts/FilterPosts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowUp,
-  faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import "../../assets/css/postAction.css";
-import MyPost from "../../components/Posts/PostNavBar";
+import PostNavBar from "../../components/Posts/PostNavBar";
+import { scrollToTop } from "../../utils/scrollToTop";
 
-function PostsMe(props) {
+function PostsHome(props) {
   console.log("re render");
   const dispatch = useDispatch();
   const location = useLocation();
@@ -24,38 +22,14 @@ function PostsMe(props) {
   const postsData = useSelector((state) => state.posts.data) ?? null; // data
   const pagination = useSelector((state) => state.posts.pagination);
   const userId = useSelector((state) => state.auth.user.id) || 0;
-
-  const searchParams = new URLSearchParams(location.search);
-  let page =
-    parseInt(searchParams.get("page")) || parseInt(pagination.currentPage) || 1;
-  let categoryId = parseInt(searchParams.get("categoryId")) || 1;
-  let column = searchParams.get("column") || "updatedAt";
-  let sortType = searchParams.get("sortType") || "desc";
-  let search = searchParams.get("search") || "";
-  let totalPages = pagination.totalPages || 1;
+  const [showGoToTop, setShowGoToTop] = useState(false);
 
   // //get data posts
   useEffect(() => {
-    dispatch(GetAllMyPosts(userId));
+    let isMe = true;
+    dispatch(GetAllPosts(userId, isMe));
   }, [userId]);
 
-  // chuyen len dau trang
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  const onPageChange = (pageNumber) => {
-    console.log(pageNumber);
-    navigate(
-      `/posts?categoryId=${categoryId}&page=${pageNumber}&column=${column}&sortType=${sortType}&search=${search}`
-    );
-    scrollToTop();
-  };
-
-  const [showGoToTop, setShowGoToTop] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
       setShowGoToTop(window.scrollY >= 200);
@@ -72,17 +46,13 @@ function PostsMe(props) {
     <>
       <Header />
       <main>
-        <MyPost />
+        <PostNavBar />
         <Container className="my-3">
-          {/* show note */}
-          {postsData && (
-            <PostsList
-              postsData={postsData}
-              column={column}
-              sortType={sortType}
-              search={search}
-            />
-          )}
+          <FilterPosts />
+          {postsData && <PostsList />}
+          <div className="d-flex justify-content-center">
+            <CustomPagination />
+          </div>
         </Container>
       </main>
       {showGoToTop && (
@@ -101,4 +71,4 @@ function PostsMe(props) {
   );
 }
 
-export default PostsMe;
+export default PostsHome;

@@ -14,6 +14,7 @@ export const GET_ALL_POST = "posts/all";
 export const GET_ALL_MY_POST = "posts/all/me";
 export const GET_POST = "posts/get";
 export const FILTER_ALL_POST = "posts/filter";
+export const FILTER_ALL_MY_POST = "posts/filter/me";
 export const GET_DETAIL_POST = "posts/detail";
 export const ADD_POST = "posts/add";
 export const ADD_POST_SUCCESS = "posts/add-success";

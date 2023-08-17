@@ -4,38 +4,59 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetAllComments } from "../../store/actions/CommentActions";
 import CommentItem from "./CommentItem";
 import CommentAddForm from "./CommentAddForm";
+import { useParams } from "react-router-dom";
 
 function CommentsList(props) {
+  const { postId } = useParams();
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comments.data);
   const userId = useSelector((state) => state.auth.user.id) || 0;
-
-  // let commentList = [];
-  // if (comments) {
-  //   for (let i = 0; i < comments.length; i++) {
-  //     commentList.push({ id: comments[i].id, path: comments[i].path });
-  //   }
-  //   console.log(commentList);
-  // }
+  const [listComments, setListComment] = useState([]);
 
   useEffect(() => {
-    dispatch(GetAllComments(props.postId, userId));
+    let listCommentsTemp = [...comments];
+    let rootComment = [];
+    if (comments) {
+      let idx = 0;
+      while (idx < listCommentsTemp.length) {
+        if (listCommentsTemp[idx].path_length === "1") {
+          rootComment = [...rootComment, listCommentsTemp[idx]];
+          listCommentsTemp.splice(idx, 1);
+        } else idx++;
+      }
+
+      rootComment.reverse();
+      idx = 0;
+      let i = listCommentsTemp.length - 1;
+      while (i >= 0) {
+        if (listCommentsTemp[i].path.includes(rootComment[idx].path)) {
+          rootComment.splice(idx + 1, 0, listCommentsTemp[i]);
+          i--;
+        } else idx++;
+      }
+      console.log(rootComment);
+    }
+    setListComment(rootComment);
+  }, [comments]);
+
+  useEffect(() => {
+    dispatch(GetAllComments(postId, userId));
   }, [userId]);
 
   return (
     <>
       <div className="border shadow p-2 mb-3 bg-body rounded">
-        {userId !== 0 && <CommentAddForm postId={props.postId} handleRender={props.handleRender}/>}
+        {userId !== 0 && <CommentAddForm />}
       </div>
       <div className="border shadow p-2 mb-3 bg-body rounded">
         <div className="ig">
-          {comments.length !== 0 ? (
-            comments.map((item) => (
+          {listComments.length !== 0 ? (
+            listComments.map((item) => (
               <div
                 key={item.id}
                 style={{ marginLeft: 50 * (item.path_length - 1) + "px" }}
               >
-                <CommentItem item={item} user={userId} postId={props.postId} />
+                <CommentItem item={item} />
               </div>
             ))
           ) : (

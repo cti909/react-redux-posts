@@ -8,14 +8,14 @@ function Footer() {
       <section className="py-2">
         <Container className="text-center text-md-start mt-5">
           <div className="row mt-3">
-            <div className="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4 text-white">
+            <div className="col-md-3 col-lg-4 col-xl-3 col-6 mx-auto mb-4 text-white">
               <h5 className="text-uppercase fw-bold mb-4">Company name</h5>
               <p>
                 The company provides the products. The products are reputable,
                 quality.
               </p>
             </div>
-            <div className="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4 text-white">
+            <div className="col-md-2 col-lg-2 col-xl-2 col-6 mx-auto mb-4 text-white">
               <h5 className="text-uppercase fw-bold mb-4">Products</h5>
               <ul className="list-unstyled">
                 <li>
@@ -40,7 +40,7 @@ function Footer() {
                 </li>
               </ul>
             </div>
-            <div className="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4 text-white">
+            <div className="col-md-3 col-lg-2 col-xl-2 col-6 mx-auto mb-4 text-white">
               <h5 className="text-uppercase fw-bold mb-4">Useful links</h5>
               <ul className="list-unstyled">
                 <li>
@@ -65,7 +65,7 @@ function Footer() {
                 </li>
               </ul>
             </div>
-            <div className="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4 text-white">
+            <div className="col-md-4 col-lg-3 col-xl-3 col-6 mx-auto mb-md-0 mb-4 text-white">
               <h5 className="text-uppercase fw-bold mb-4">Contact</h5>
               <p>
                 <i className="fas fa-home me-3"></i>Hoa Khanh, Da Nang

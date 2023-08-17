@@ -1,8 +1,18 @@
 import React from "react";
 import RegisterForm from "../../components/Auth/RegisterForm";
 import background_login from "../../assets/images/background_login.jpg";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const handleClickLogin = (e) => {
+    e.preventDefault();
+    navigate("/login");
+  };
+  const handleClickHome = (e) => {
+    e.preventDefault();
+    navigate("/");
+  };
   return (
     <section
       style={{
@@ -22,15 +32,23 @@ const RegisterPage = () => {
               </h1>
               <RegisterForm />
               <div className="d-flex justify-content-end mt-2">
-                <a className="text-white-50" href="/">
+                <Link
+                  className="text-white-50"
+                  href="/"
+                  onClick={handleClickHome}
+                >
                   Back to home
-                </a>
+                </Link>
               </div>
               <p className="mb-4 text-center mt-4">
                 Don't have an account?
-                <a href="/login" className="ms-1 text-white-50 fw-bold">
+                <Link
+                  href="/login"
+                  className="ms-1 text-white-50 fw-bold"
+                  onClick={handleClickLogin}
+                >
                   Sign In
-                </a>
+                </Link>
               </p>
             </div>
           </div>

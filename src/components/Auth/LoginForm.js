@@ -1,90 +1,98 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
 import { Login } from "../../store/actions/AuthActions";
 import { useNavigate } from "react-router-dom";
 import { LOGIN_SUCCESS } from "../../constants/ActionConstant";
+import { Button, Form } from "react-bootstrap";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({});
+  const [errors, setErrors] = useState({});
 
-  const handleChangeEmail = (e) => {
-    const email = e.target.value;
-    setEmail(email);
+  const setField = (field, value) => {
+    setForm({
+      ...form,
+      [field]: value,
+    });
+    if (!!errors[field])
+      setErrors({
+        ...errors,
+        [field]: null,
+      });
   };
-
-  const handleChangePassword = (e) => {
-    const password = e.target.value;
-    setPassword(password);
-  };
-
-  const required = (value) => {
-    if (!value) {
-      return (
-        <div className="alert alert-danger" role="alert">
-          This field is required!
-        </div>
-      );
-    }
+  const rules = () => {
+    const { email, password } = form;
+    const newErrors = {};
+    // email errors
+    if (!email || email === "") newErrors.email = "cannot be blank!";
+    // password errors
+    if (!password || password === "") newErrors.password = "cannot be blank!";
+    return newErrors;
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(Login(email, password))
-      .then((res) => {
-        if (res === LOGIN_SUCCESS) {
-          navigate("/");
-        } else {
-          alert("Register failed");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi và cập nhật thông báo lỗi lên state.
-        // setError(error);
-      });
+    // console.log(e.target.email.value);
+    const newErrors = rules();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      console.log(newErrors);
+    } else {
+      console.log(form);
+      dispatch(Login(form.email, form.password))
+        .then((res) => {
+          if (res === LOGIN_SUCCESS) {
+            navigate("/");
+          } else {
+            alert("Email or password is failed");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <div className="form-outline form-white mb-3">
-        <label className="form-label" htmlFor="email">
-          Email
-        </label>
-        <Input
+      <Form.Group className="mb-3">
+        <Form.Label>Email address</Form.Label>
+        <Form.Control
           type="email"
           name="email"
-          id="email"
-          className="form-control form-control-lg"
-          placeholder="Enter Email"
-          onChange={handleChangeEmail}
-          validations={[required]}
+          placeholder="name@example.com"
+          onChange={(e) => setField("email", e.target.value)}
+          isInvalid={!!errors.email}
+          required
         />
-        {/* Thêm xử lý hiển thị lỗi trong React (nếu cần) */}
-      </div>
-      <div className="form-outline form-white mb-3">
-        <label className="form-label" htmlFor="password">
-          Password
-        </label>
-        <Input
-          name="password"
-          id="password"
+      </Form.Group>
+      <Form.Control.Feedback type="invalid">
+        {errors.email}
+      </Form.Control.Feedback>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
           type="password"
-          className="form-control form-control-lg"
-          placeholder="Enter Password"
-          onChange={handleChangePassword}
-          validations={[required]}
+          name="password"
+          placeholder="Enter your password"
+          onChange={(e) => setField("password", e.target.value)}
+          isInvalid={!!errors.password}
+          required
         />
-        {/* Thêm xử lý hiển thị lỗi trong React (nếu cần) */}
-      </div>
-      <button
+      </Form.Group>
+      <Form.Control.Feedback type="invalid">
+        {errors.password}
+      </Form.Control.Feedback>
+
+      <Button
         type="submit"
-        className="btn btn-secondary form-control form-control-lg mt-3"
+        variant="secondary"
+        className="form-control form-control-lg mt-3"
       >
         <strong>Sign in</strong>
-      </button>
+      </Button>
     </Form>
   );
 };

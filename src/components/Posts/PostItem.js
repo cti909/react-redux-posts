@@ -13,24 +13,22 @@ import { MEDIA_URL } from "../../constants/config";
 function PostItem(props) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const userId = useSelector((state) => state.auth.user.id) || -2;
+  const userId = useSelector((state) => state.auth.user.id);
+  const column = useSelector((state) => state.posts.sort.column);
+  const sortType = useSelector((state) => state.posts.sort.sortType);
+  const search = useSelector((state) => state.posts.sort.search);
 
-  let sortType = props.sortType || "desc";
-  let column = props.column || "updatedAt";
-  let search = props.search || "";
   // xoa 1 note
   const handleClickDelete = (postId) => {
     console.log("delete click", postId);
     const result = window.confirm("Are you sure you want to delete this item?");
     if (result) {
-      dispatch(DeletePosts(postId, sortType, column, search, props.userId))
+      dispatch(DeletePosts(postId, sortType, column, search, userId))
         .then((res) => {
           console.log(res);
           if (res === DELETE_POST_SUCCESS) {
             alert("Delete this post success!");
-            navigate(
-              `/posts?categoryId=1&page=1&column=updatedAt&sortType=desc&search=`
-            );
+            navigate(`/posts`);
           } else {
             alert("Delete this post failed!");
           }
@@ -52,7 +50,7 @@ function PostItem(props) {
         {props.item.updated_at !== props.item.created_at && (
           <span> |Edited</span>
         )}
-        {props.item.creator_id === props.userId && (
+        {props.item.creator_id === userId && (
           <div className="d-flex ms-3 me-2">
             <div className="me-2">
               <ButtonEdit
@@ -82,7 +80,7 @@ function PostItem(props) {
       )}
       <br className="border mt-3 mb-2" />
       <PostActions
-        userId={props.userId}
+        userId={userId}
         postId={props.item.id}
         isLiked={props.item.is_liked}
         likesCount={props.item.likes_post_count}

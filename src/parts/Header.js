@@ -9,33 +9,50 @@ import {
 } from "react-bootstrap";
 import logo from "../logo.svg";
 import "../App.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
-import { setUser } from "../store/actions/AuthActions";
+import { SetUser, setUser } from "../store/actions/AuthActions";
 
 function Header(prop) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const userFromStore = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
 
-  const getUserLocal = () => {
-    let userString = localStorage.getItem("user");
-    let user = JSON.parse(userString);
-    console.log(user);
-    return user;
-  };
-
-  // Nếu trạng thái user trong Redux store là một object rỗng, thì lấy dữ liệu từ Local Storage và cập nhật vào Redux store
   useEffect(() => {
-    if (Object.keys(userFromStore).length === 0) {
-      const userFromStore = getUserLocal();
-      if (userFromStore) {
-        dispatch(setUser(userFromStore));
-      }
-    }
-  }, [userFromStore, dispatch]);
+    if (Object.keys(user).length === 0) dispatch(SetUser());
+  }, [user]);
+
+  const handleClickHome = (event) => {
+    event.preventDefault();
+    navigate("/");
+  };
+  const handleClickPosts = (event) => {
+    event.preventDefault();
+    navigate("/posts");
+  };
+  const handleClickRegister = (event) => {
+    event.preventDefault();
+    navigate("/register");
+  };
+  const handleClickLogin = (event) => {
+    event.preventDefault();
+    navigate("/login");
+  };
+  const handleClickMyAccount = (event) => {
+    event.preventDefault();
+    navigate("/user");
+  };
+  const handleClickMyPosts = (event) => {
+    event.preventDefault();
+    navigate("/posts/me");
+  };
+  const handleClickLogout = (event) => {
+    event.preventDefault();
+    navigate("/logout");
+  };
 
   return (
     <Navbar collapseOnSelect expand="lg" variant="dark" bg="dark">
@@ -47,24 +64,39 @@ function Header(prop) {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/posts">Posts</Nav.Link>
+            <Nav.Link href="/" onClick={handleClickHome}>
+              Home
+            </Nav.Link>
+            <Nav.Link href="/posts" onClick={handleClickPosts}>
+              Posts
+            </Nav.Link>
           </Nav>
           <Nav>
             {isLoggedIn ? (
               <>
                 <div className="d-flex align-items-center">
-                  <span className="text-white">{userFromStore.name}</span>
+                  <span className="text-white">{user.name}</span>
                 </div>
                 <NavDropdown
                   title={<FontAwesomeIcon icon={faGear} spin />}
                   id="collasible-nav-dropdown"
                 >
-                  <NavDropdown.Item href="/user">My account</NavDropdown.Item>
+                  <NavDropdown.Item
+                    href="/auth/me"
+                    onClick={handleClickMyAccount}
+                  >
+                    My account
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    href="/posts/me"
+                    onClick={handleClickMyPosts}
+                  >
+                    My post
+                  </NavDropdown.Item>
                   <NavDropdown.Item href="#">Setting</NavDropdown.Item>
                   <NavDropdown.Item href="#">Help</NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item href="/logout">
+                  <NavDropdown.Item href="/logout" onClick={handleClickLogout}>
                     <Button className="w-100" variant="primary">
                       Logout
                     </Button>
@@ -73,12 +105,12 @@ function Header(prop) {
               </>
             ) : (
               <>
-                <Nav.Link href="/register">
+                <Nav.Link href="/register" onClick={handleClickRegister}>
                   <Button className="w-100" variant="primary">
                     Register
                   </Button>
                 </Nav.Link>
-                <Nav.Link href="/login">
+                <Nav.Link href="/login" onClick={handleClickLogin}>
                   <Button className="w-100" variant="primary">
                     Login
                   </Button>
