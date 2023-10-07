@@ -4,6 +4,7 @@ import {
   LOGOUT,
   REGISTER_FAILED,
   REGISTER_SUCCESS,
+  SET_ISLOGIN,
   SET_USER,
 } from "../../constants/ActionConstant";
 
@@ -35,6 +36,8 @@ const AuthReducer = (state = initState, action) => {
       return { ...state, isRegistered: false, error: action.payload };
     case SET_USER:
       return { ...state, isLoggedIn: true, user: action.payload };
+    case SET_ISLOGIN:
+      return { ...state, isLoggedIn: true };
     default:
       return state;
   }

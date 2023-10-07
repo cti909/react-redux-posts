@@ -4,6 +4,7 @@ import {
   LOGOUT,
   REGISTER_FAILED,
   REGISTER_SUCCESS,
+  SET_ISLOGIN,
   SET_USER,
 } from "../../constants/ActionConstant";
 import { login, register, setUser } from "../../services/Auth/Auth.service";
@@ -105,6 +106,23 @@ export const SetUser = () => {
       console.log("err", error);
       dispatch({
         type: SET_USER,
+        payload: [],
+      });
+    }
+  };
+};
+
+export const SetIsLogin = () => {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: SET_ISLOGIN,
+        payload: [],
+      });
+    } catch (error) {
+      console.log("err", error);
+      dispatch({
+        type: SET_ISLOGIN,
         payload: [],
       });
     }

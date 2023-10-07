@@ -5,6 +5,7 @@ export const LOGOUT = "auth/logout";
 export const REGISTER_SUCCESS = "auth/register-success";
 export const REGISTER_FAILED = "auth/register-failed";
 export const SET_USER = "auth/user";
+export const SET_ISLOGIN = "auth/islogin";
 
 // User
 

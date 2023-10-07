@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
-import { SetUser, setUser } from "../store/actions/AuthActions";
+import { SetIsLogin, SetUser, setUser } from "../store/actions/AuthActions";
 
 function Header(prop) {
   const dispatch = useDispatch();
@@ -22,8 +22,9 @@ function Header(prop) {
   const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (Object.keys(user).length === 0) dispatch(SetUser());
-  }, [user]);
+    // if (localStorage.getItem("accessToken")) dispatch(SetIsLogin());
+    if (isLoggedIn || localStorage.getItem("accessToken") && Object.keys(user).length === 0) dispatch(SetUser());
+  }, []);
 
   const handleClickHome = (event) => {
     event.preventDefault();
